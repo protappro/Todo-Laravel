@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Auth;
 use Validator;
 use Illuminate\Http\Request;
 use App\Models\ToDoList;
@@ -15,7 +16,7 @@ class ToDoListController extends Controller
      */
     public function index()
     {   
-        $lists = ToDoList::get();
+        $lists = ToDoList::where('user_id', Auth::user()->id)->get();
         return view('todo', compact('lists'));
     }
 
@@ -45,6 +46,7 @@ class ToDoListController extends Controller
         }
         //
         $data = [
+            'user_id' => Auth::user()->id,
             'title' => $request->title,
             'is_completed' => !empty($request->status) ? $request->status : 0
         ];
@@ -86,7 +88,7 @@ class ToDoListController extends Controller
         if(!empty($_GET['is_complete'])){
             $is_complete = 1;
         }
-        $query = ToDoList::updateOrCreate([ 'id' => $_GET['id'] ], ['is_completed' => $is_complete]);
+        $query = ToDoList::updateOrCreate([ 'id' => $_GET['id'] ], ['is_completed' => $is_complete, 'user_id' => Auth::user()->id]);
         if($query){
             $res = ['status' => true, 'msg' => "Task has been completed."];
         }else {

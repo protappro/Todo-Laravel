@@ -10,7 +10,7 @@
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css" integrity="sha512-3pIirOrwegjM6erE5gPSwkUzO+3cTjpnV9lexlNZqvupR64iZBnOOTiiLPb9M36zpMScbmUNIcHUqKD47M719g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha512-SfTiTlX6kk+qitfevl/7LibUOeJWlt9rbyDn92a1DqWOw9vWG2MFoays0sgObmWazO5BQPiFucnnEAjpAB+/Sw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-	<title>Hello, world!</title>
+	<title>{{ config('app.name') }}</title>
 	<style>
 		table tr td{
     		background-color: #f4f4f4a3;
@@ -33,9 +33,18 @@
 		<h5 class="my-0 mr-md-auto font-weight-normal text-info">Magic Mind</h5>
 		<nav class="my-2 my-md-0 mr-md-3">
 			<a class="p-2 text-dark text-decoration-none" href="#">Home</a>
-			<a class="p-2 text-dark text-decoration-none" href="#">Contact</a>
+			<a class="p-2 text-dark text-decoration-none" href="mailto:mondalprotap@gmail.com">Contact</a>
 			<a class="p-2 text-dark text-decoration-none" href="#">Interview</a>
-			<a class="btn btn-outline-danger" href="{{ route('auth.logout') }}">Logout</a>
+			<div class="btn-group">
+			  <button type="button" class="btn btn-info profile dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+			    {{Auth::user()->name}}
+			  </button>
+			  <div class="dropdown-menu">			    
+				<a class="btn btn-sm btn-outline-danger" href="{{ route('auth.logout') }}">Logout</a>
+			  </div>
+			</div>
+			{{-- <span class="badge bg-primary py-3 px-4">{{Auth::user()->name}}</span>
+			<a class="btn btn-outline-danger" href="{{ route('auth.logout') }}">Logout</a> --}}
 		</nav>
 	</div>
 	<div class="row justify-content-center mt-5">
@@ -59,10 +68,10 @@
 	<div class="container">
 		<div class="row">
 			<div class="col-10"> 
-				<h2>All Todos</h2>
+				<h2>Your Todos</h2>
 			</div>
 			<div class="col-2 float-right">
-				<button type="button" class="btn btn-sm btn-primary add_todo_details float-right" data-bs-toggle="modal" data-bs-target="#exampleModal"> <i class="fa fa-plus"></i> Add Todo</button>
+				<button type="button" class="btn btn-sm btn-success add_todo_details float-right" data-bs-toggle="modal" data-bs-target="#exampleModal"> <i class="fa fa-plus"></i> Add Todo</button>
 			</div>
 			<div class="col-12">
 				<div class="row">
@@ -136,7 +145,7 @@
 										<div class="col-sm-12">
 											<div class="form-group mb-0">
 												<div class="font-size-lg mb-0"> Title </div>
-												<input class="form-control form-control-sm" type="text" id="title" autocomplete="off" name="title" value="" />
+												<textarea class="form-control form-control-sm" type="text" id="title" autocomplete="off" name="title" value="" rows="5"></textarea>
 												<input type="hidden" name="todo_id" class="_todo_id">
 												<input type="hidden" name="status" class="_status">
 											</div>
@@ -162,6 +171,9 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 	<script>
+		$('.profile').click(function(){
+			$('.dropdown-menu').toggle().css({"right": "0","top": "40px","padding": "10px 10px"});
+		});
 		$(".add_form_btn").click(function (e) { 
 			e.preventDefault();
 			var formData = $('#add_todo_form').serialize();
@@ -252,7 +264,7 @@
 				data: {todo_id: id},
 				success: function (res) {
 					if(res.status){
-						toastr.success(res.msg);
+						toastr.warning(res.msg);
 						$('#delete-btn_'+id).closest("tr").remove();
 					} else {
 						toastr.error(res.msg)
